@@ -400,12 +400,6 @@ func main() {
 	jurus, _ := importJurusanFromCSV("jurusan.csv")
 	mhs, _ := importMahasiswaFromCSV("mahasiswa.csv")
 
-	if err := termbox.Init(); err != nil {
-		fmt.Println("Failed to initialize termbox:", err)
-		return
-	}
-	defer termbox.Close()
-
 	options := []string{
 		"Jurusan : Tampilkan",
 		"Jurusan : Tambah",
@@ -425,6 +419,7 @@ func main() {
 
 	selected := 0
 
+	enableTermbox()
 	for {
 		if MenuControl(options, &selected) {
 			clearScreen()
