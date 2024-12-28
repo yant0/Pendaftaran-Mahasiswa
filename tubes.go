@@ -647,6 +647,7 @@ func main() {
 			enableTermbox()
 		} else {
 			clearScreen()
+			termbox.Close()
 			fmt.Println("\nProgram Berhenti")
 			return
 		}
