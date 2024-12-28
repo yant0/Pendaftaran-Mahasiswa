@@ -415,6 +415,15 @@ func generateAkunMhs(mhs []Mahasiswa) []User {
 	return usr
 }
 
+func autentikasi(userList []User, username string, password string) bool {
+	for _, u := range userList {
+		if username == u.Name && password == u.Pass {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	jurus, _ := importJurusanFromCSV("jurusan.csv")
 	mhs, _ := importMahasiswaFromCSV("mahasiswa.csv")
