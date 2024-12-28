@@ -427,7 +427,7 @@ func autentikasi(userList []User, username string, password string) (bool, strin
 func main() {
 	jurus, _ := importJurusanFromCSV("jurusan.csv")
 	mhs, _ := importMahasiswaFromCSV("mahasiswa.csv")
-	// user := generateAkunMhs()
+	user := generateAkunMhs(mhs)
 
 	options := []string{
 		"Jurusan : Tampilkan",
@@ -449,6 +449,7 @@ func main() {
 	selected := 0
 	var loginInfo [2]string
 	signedIn := false
+	role := ""
 
 	enableTermbox()
 
@@ -456,26 +457,27 @@ func main() {
 		loginField := []string{"Username\t" + loginInfo[0], "Password\t" + loginInfo[1], "\nLogin"}
 		if MenuControl(loginField, &selected) {
 			if selected == 2 {
-				if loginInfo[0] == "admin" && loginInfo[1] == "1234" {
-					signedIn = true
-					break
-				} else if loginInfo[0] == "mahasiswa" && loginInfo[1] == "1234" {
+				signedIn, role = autentikasi(user, loginInfo[0], loginInfo[1])
+				if role == "mhs" {
 					options = []string{
 						"Jurusan : Tampilkan",
 						"Mahasiswa : Tampilkan",
 						"Mahasiswa : Edit",
 					}
-					signedIn = true
+					break
+				} else if role == "admin" {
 					break
 				}
+				clearScreen()
+				termbox.Close()
+				loginInfo[selected] = readInput(highlightText(loginField[selected]))
+			} else {
+				clearScreen()
+				fmt.Println("\nProgram Berhenti")
+				return
 			}
-			clearScreen()
-			termbox.Close()
-			loginInfo[selected] = readInput(highlightText(loginField[selected]))
-		} else {
-
+			enableTermbox()
 		}
-		enableTermbox()
 	}
 
 	for {
