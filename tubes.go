@@ -409,6 +409,7 @@ func generateAkunMhs(mhs []Mahasiswa) []User {
 		user := User{
 			Name: m.Nama,
 			Pass: m.Nama + "123",
+			Role: "mhs",
 		}
 		usr = append(usr, user)
 	}
