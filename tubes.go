@@ -25,6 +25,12 @@ type Mahasiswa struct {
 	Status   string
 }
 
+type User struct {
+	Name string
+	Pass string
+	Role string // "admin", "student"
+}
+
 func dummy() ([]Jurusan, []Mahasiswa) {
 	jurusans := []Jurusan{
 		"Teknik Informatika",
