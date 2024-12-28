@@ -465,7 +465,6 @@ func main() {
 					options = []string{
 						"Jurusan : Tampilkan",
 						"Mahasiswa : Tampilkan",
-						"Mahasiswa : Edit",
 					}
 				}
 			} else {
