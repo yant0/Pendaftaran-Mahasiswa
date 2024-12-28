@@ -480,6 +480,8 @@ func main() {
 		}
 	}
 
+	selected = 0
+
 	for {
 		if MenuControl(options, &selected) {
 			clearScreen()
