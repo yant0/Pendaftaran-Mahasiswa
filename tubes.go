@@ -25,6 +25,12 @@ type Mahasiswa struct {
 	Status   string
 }
 
+type User struct {
+	Username string
+	Password string // Store hashed passwords in a real application
+	Role     string // Example roles: "admin", "student"
+}
+
 func dummy() ([]Jurusan, []Mahasiswa) {
 	jurusans := []Jurusan{
 		"Teknik Informatika",
