@@ -429,6 +429,7 @@ func main() {
 	jurus, _ := importJurusanFromCSV("jurusan.csv")
 	mhs, _ := importMahasiswaFromCSV("mahasiswa.csv")
 	user := generateAkunMhs(mhs)
+	user = append(user, User{"admin", "admin123", "admin"})
 
 	options := []string{
 		"Jurusan : Tampilkan",
@@ -455,8 +456,9 @@ func main() {
 	enableTermbox()
 
 	for !signedIn {
-		loginField := []string{"Username\t" + loginInfo[0], "Password\t" + loginInfo[1], "\nLogin"}
-		if MenuControl(loginField, &selected) {
+		loginAja := []string{"Username : " + loginInfo[0], "Password : " + loginInfo[1], "\nLogin"}
+		loginField := []string{"Username\t", "Password\t", "\nLogin"}
+		if MenuControl(loginAja, &selected) {
 			if selected == 2 {
 				signedIn, role = autentikasi(user, loginInfo[0], loginInfo[1])
 				if role == "mhs" {
@@ -465,19 +467,17 @@ func main() {
 						"Mahasiswa : Tampilkan",
 						"Mahasiswa : Edit",
 					}
-					break
-				} else if role == "admin" {
-					break
 				}
+			} else {
 				clearScreen()
 				termbox.Close()
 				loginInfo[selected] = readInput(highlightText(loginField[selected]))
-			} else {
-				clearScreen()
-				fmt.Println("\nProgram Berhenti")
-				return
+				enableTermbox()
 			}
-			enableTermbox()
+		} else {
+			clearScreen()
+			fmt.Println("\nProgram Berhenti")
+			return
 		}
 	}
 
