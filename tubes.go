@@ -402,6 +402,19 @@ func importMahasiswaFromCSV(filename string) ([]Mahasiswa, error) {
 	return mahasiswa, nil
 }
 
+func generateAkunMhs(mhs []Mahasiswa) []User {
+	var usr []User
+
+	for _, m := range mhs {
+		user := User{
+			Name: m.Nama,
+			Pass: m.Nama + "123",
+		}
+		usr = append(usr, user)
+	}
+	return usr
+}
+
 func main() {
 	jurus, _ := importJurusanFromCSV("jurusan.csv")
 	mhs, _ := importMahasiswaFromCSV("mahasiswa.csv")
