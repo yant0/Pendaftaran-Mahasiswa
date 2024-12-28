@@ -415,13 +415,13 @@ func generateAkunMhs(mhs []Mahasiswa) []User {
 	return usr
 }
 
-func autentikasi(userList []User, username string, password string) bool {
+func autentikasi(userList []User, username string, password string) (bool, string) {
 	for _, u := range userList {
 		if username == u.Name && password == u.Pass {
-			return true
+			return true, u.Role
 		}
 	}
-	return false
+	return false, ""
 }
 
 func main() {
