@@ -28,8 +28,17 @@ type Mahasiswa struct {
 type User struct {
 	Name string
 	Pass string
-	Role string // "admin", "student"
+	Role string // "admin"
 }
+
+// /$$   /$$                                     /$$$$$$             /$$                          /$$$$$$
+// | $$  | $$                                    |_  $$_/            | $$                         /$$__  $$
+// | $$  | $$  /$$$$$$$  /$$$$$$   /$$$$$$         | $$   /$$$$$$$  /$$$$$$    /$$$$$$   /$$$$$$ | $$  \__//$$$$$$   /$$$$$$$  /$$$$$$
+// | $$  | $$ /$$_____/ /$$__  $$ /$$__  $$        | $$  | $$__  $$|_  $$_/   /$$__  $$ /$$__  $$| $$$$   |____  $$ /$$_____/ /$$__  $$
+// | $$  | $$|  $$$$$$ | $$$$$$$$| $$  \__/        | $$  | $$  \ $$  | $$    | $$$$$$$$| $$  \__/| $$_/    /$$$$$$$| $$      | $$$$$$$$
+// | $$  | $$ \____  $$| $$_____/| $$              | $$  | $$  | $$  | $$ /$$| $$_____/| $$      | $$     /$$__  $$| $$      | $$_____/
+// |  $$$$$$/ /$$$$$$$/|  $$$$$$$| $$             /$$$$$$| $$  | $$  |  $$$$/|  $$$$$$$| $$      | $$    |  $$$$$$$|  $$$$$$$|  $$$$$$$
+//  \______/ |_______/  \_______/|__/            |______/|__/  |__/   \___/   \_______/|__/      |__/     \_______/ \_______/ \_______/
 
 func dummy() ([]Jurusan, []Mahasiswa) {
 	jurusans := []Jurusan{
@@ -71,133 +80,6 @@ func clearScreen() {
 
 func highlightText(text string) string {
 	return fmt.Sprintf("\033[7;34m%s\033[0m", text)
-}
-
-func tambahJurusan(jurusan []Jurusan, nama string) []Jurusan {
-	jurusan = append(jurusan, Jurusan(nama))
-	return jurusan
-}
-
-func hapusJurusan(jurusan []Jurusan, nama string) []Jurusan {
-	for i := 0; i < len(jurusan); i++ {
-		if jurusan[i] == Jurusan(nama) {
-			jurusan = append(jurusan[:i], jurusan[i+1:]...)
-			break
-		}
-	}
-	return jurusan
-}
-
-func editJurusan(jurusan []Jurusan, mahasiswa []Mahasiswa, oldName, newName string) ([]Jurusan, []Mahasiswa) {
-	for i := 0; i < len(jurusan); i++ {
-		if jurusan[i] == Jurusan(oldName) {
-			jurusan[i] = Jurusan(newName)
-			break
-		}
-	}
-
-	for i := 0; i < len(mahasiswa); i++ {
-		if mahasiswa[i].Jurusan == oldName {
-			mahasiswa[i].Jurusan = newName
-		}
-	}
-
-	return jurusan, mahasiswa
-}
-
-func viewJurusan(jurusan []Jurusan) {
-	t := table.New(os.Stdout)
-	t.SetHeaders("No", "Nama Jurusan")
-	for i, j := range jurusan {
-		t.AddRow(strconv.Itoa(i+1), string(j))
-	}
-
-	t.Render()
-}
-
-func tambahMahasiswa(mhs []Mahasiswa, id string, nama, jurusan string, nilaiTes float64) []Mahasiswa {
-	status := "ditolak"
-	if nilaiTes >= 75 {
-		status = "diterima"
-	}
-	mhs = append(mhs, Mahasiswa{ID: id, Nama: nama, Jurusan: jurusan, NilaiTes: nilaiTes, Status: status})
-	return mhs
-}
-
-func editMahasiswa(mhs []Mahasiswa, id string, nama, jurusan string, nilaiTes float64) []Mahasiswa {
-	for i := 0; i < len(mhs); i++ {
-		if mhs[i].ID == id {
-			mhs[i].Nama = nama
-			mhs[i].Jurusan = jurusan
-			mhs[i].NilaiTes = nilaiTes
-			if nilaiTes >= 75 {
-				mhs[i].Status = "✅"
-			} else {
-				mhs[i].Status = "❌"
-			}
-			break
-		}
-	}
-	return mhs
-}
-
-func hapusMahasiswa(mhs []Mahasiswa, id string) []Mahasiswa {
-	for i := 0; i < len(mhs); i++ {
-		if mhs[i].ID == id {
-			mhs = append(mhs[:i], mhs[i+1:]...)
-			break
-		}
-	}
-	return mhs
-}
-
-func viewMhs(mhs []Mahasiswa, jurusanFilter string) {
-	t := table.New(os.Stdout)
-	t.SetHeaders("ID", "Nama", "Jurusan", "Nilai Tes", "Status")
-
-	for _, m := range mhs {
-		if jurusanFilter == "" || m.Jurusan == jurusanFilter {
-			t.AddRow(m.ID, m.Nama, m.Jurusan, fmt.Sprintf("%.2f", m.NilaiTes), m.Status)
-		}
-	}
-
-	t.Render()
-}
-
-func sortNilai(mhs []Mahasiswa, ascending bool) {
-	if ascending {
-		// Sequential search
-		for i := 0; i < len(mhs)-1; i++ {
-			for j := i + 1; j < len(mhs); j++ {
-				if mhs[i].NilaiTes > mhs[j].NilaiTes {
-					mhs[i], mhs[j] = mhs[j], mhs[i]
-				}
-			}
-		}
-	} else {
-		binarySort(mhs)
-	}
-}
-
-func binarySort(mhs []Mahasiswa) {
-	for i := 1; i < len(mhs); i++ {
-		key := mhs[i]
-		low, high := 0, i-1
-
-		for low <= high {
-			mid := (low + high) / 2
-			if mhs[mid].NilaiTes < key.NilaiTes {
-				high = mid - 1
-			} else {
-				low = mid + 1
-			}
-		}
-
-		for j := i - 1; j >= low; j-- {
-			mhs[j+1] = mhs[j]
-		}
-		mhs[low] = key
-	}
 }
 
 func drawMenu[T any](options []T, selected int) {
@@ -249,6 +131,67 @@ func MenuControl[l any](list []l, controller *int) bool {
 			return false
 		}
 	}
+}
+
+func generateAkunMhs(mhs []Mahasiswa) []User {
+	var usr []User
+
+	for _, m := range mhs {
+		user := User{
+			Name: m.Nama,
+			Pass: m.Nama + "123",
+			Role: "mhs",
+		}
+		usr = append(usr, user)
+	}
+	return usr
+}
+
+func autentikasi(userList []User, username string, password string) (bool, string) {
+	for _, u := range userList {
+		if username == u.Name && password == u.Pass {
+			return true, u.Role
+		}
+	}
+	return false, ""
+}
+
+// /$$$$$$$$                              /$$     /$$                               /$$ /$$   /$$
+// | $$_____/                             | $$    |__/                              | $$|__/  | $$
+// | $$    /$$   /$$ /$$$$$$$   /$$$$$$$ /$$$$$$   /$$  /$$$$$$  /$$$$$$$   /$$$$$$ | $$ /$$ /$$$$$$   /$$   /$$
+// | $$$$$| $$  | $$| $$__  $$ /$$_____/|_  $$_/  | $$ /$$__  $$| $$__  $$ |____  $$| $$| $$|_  $$_/  | $$  | $$
+// | $$__/| $$  | $$| $$  \ $$| $$        | $$    | $$| $$  \ $$| $$  \ $$  /$$$$$$$| $$| $$  | $$    | $$  | $$
+// | $$   | $$  | $$| $$  | $$| $$        | $$ /$$| $$| $$  | $$| $$  | $$ /$$__  $$| $$| $$  | $$ /$$| $$  | $$
+// | $$   |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$|  $$$$$$$| $$| $$  |  $$$$/|  $$$$$$$
+// |__/    \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/ \_______/|__/|__/   \___/   \____  $$
+// .																							       /$$  | $$
+// .																							      |  $$$$$$/
+// .																							       \______/
+func tambahJurusan(jurusan []Jurusan, nama string) []Jurusan {
+	jurusan = append(jurusan, Jurusan(nama))
+	return jurusan
+}
+
+func tambahMahasiswa(mhs []Mahasiswa, id string, nama, jurusan string, nilaiTes float64) []Mahasiswa {
+	status := "ditolak"
+	if nilaiTes >= 75 {
+		status = "diterima"
+	}
+	mhs = append(mhs, Mahasiswa{ID: id, Nama: nama, Jurusan: jurusan, NilaiTes: nilaiTes, Status: status})
+	return mhs
+}
+
+func viewMhs(mhs []Mahasiswa, jurusanFilter string) {
+	t := table.New(os.Stdout)
+	t.SetHeaders("ID", "Nama", "Jurusan", "Nilai Tes", "Status")
+
+	for _, m := range mhs {
+		if jurusanFilter == "" || m.Jurusan == jurusanFilter {
+			t.AddRow(m.ID, m.Nama, m.Jurusan, fmt.Sprintf("%.2f", m.NilaiTes), m.Status)
+		}
+	}
+
+	t.Render()
 }
 
 func exportJurusanToCSV(jurusan []Jurusan, filename string) {
@@ -402,27 +345,116 @@ func importMahasiswaFromCSV(filename string) ([]Mahasiswa, error) {
 	return mahasiswa, nil
 }
 
-func generateAkunMhs(mhs []Mahasiswa) []User {
-	var usr []User
-
-	for _, m := range mhs {
-		user := User{
-			Name: m.Nama,
-			Pass: m.Nama + "123",
-			Role: "mhs",
+func editJurusan(jurusan []Jurusan, mahasiswa []Mahasiswa, oldName, newName string) ([]Jurusan, []Mahasiswa) {
+	for i := 0; i < len(jurusan); i++ {
+		if jurusan[i] == Jurusan(oldName) {
+			jurusan[i] = Jurusan(newName)
+			break
 		}
-		usr = append(usr, user)
 	}
-	return usr
+
+	for i := 0; i < len(mahasiswa); i++ {
+		if mahasiswa[i].Jurusan == oldName {
+			mahasiswa[i].Jurusan = newName
+		}
+	}
+
+	return jurusan, mahasiswa
 }
 
-func autentikasi(userList []User, username string, password string) (bool, string) {
-	for _, u := range userList {
-		if username == u.Name && password == u.Pass {
-			return true, u.Role
+func editMahasiswa(mhs []Mahasiswa, id string, nama, jurusan string, nilaiTes float64) []Mahasiswa {
+	for i := 0; i < len(mhs); i++ {
+		if mhs[i].ID == id {
+			mhs[i].Nama = nama
+			mhs[i].Jurusan = jurusan
+			mhs[i].NilaiTes = nilaiTes
+			if nilaiTes >= 75 {
+				mhs[i].Status = "✅"
+			} else {
+				mhs[i].Status = "❌"
+			}
+			break
 		}
 	}
-	return false, ""
+	return mhs
+}
+
+func hapusJurusan(jurusan []Jurusan, nama string) []Jurusan {
+	for i := 0; i < len(jurusan); i++ {
+		if jurusan[i] == Jurusan(nama) {
+			jurusan = append(jurusan[:i], jurusan[i+1:]...)
+			break
+		}
+	}
+	return jurusan
+}
+
+func viewJurusan(jurusan []Jurusan) {
+	t := table.New(os.Stdout)
+	t.SetHeaders("No", "Nama Jurusan")
+	for i, j := range jurusan {
+		t.AddRow(strconv.Itoa(i+1), string(j))
+	}
+
+	t.Render()
+}
+
+func hapusMahasiswa(mhs []Mahasiswa, id string) []Mahasiswa {
+	for i := 0; i < len(mhs); i++ {
+		if mhs[i].ID == id {
+			mhs = append(mhs[:i], mhs[i+1:]...)
+			break
+		}
+	}
+	return mhs
+}
+
+// /$$$$$$  /$$                               /$$   /$$
+// /$$__  $$| $$                              |__/  | $$
+// | $$  \ $$| $$  /$$$$$$   /$$$$$$   /$$$$$$  /$$ /$$$$$$   /$$$$$$/$$$$   /$$$$$$
+// | $$$$$$$$| $$ /$$__  $$ /$$__  $$ /$$__  $$| $$|_  $$_/  | $$_  $$_  $$ |____  $$
+// | $$__  $$| $$| $$  \ $$| $$  \ $$| $$  \__/| $$  | $$    | $$ \ $$ \ $$  /$$$$$$$
+// | $$  | $$| $$| $$  | $$| $$  | $$| $$      | $$  | $$ /$$| $$ | $$ | $$ /$$__  $$
+// | $$  | $$| $$|  $$$$$$$|  $$$$$$/| $$      | $$  |  $$$$/| $$ | $$ | $$|  $$$$$$$
+// |__/  |__/|__/ \____  $$ \______/ |__/      |__/   \___/  |__/ |__/ |__/ \_______/
+// 		     	  /$$  \ $$
+// 		     	 |  $$$$$$/
+// 		     	  \______/
+
+func sortNilai(mhs []Mahasiswa, ascending bool) {
+	if ascending {
+		// Sequential search
+		for i := 0; i < len(mhs)-1; i++ {
+			for j := i + 1; j < len(mhs); j++ {
+				if mhs[i].NilaiTes > mhs[j].NilaiTes {
+					mhs[i], mhs[j] = mhs[j], mhs[i]
+				}
+			}
+		}
+	} else {
+		binarySort(mhs)
+	}
+}
+
+func binarySort(mhs []Mahasiswa) {
+	for i := 1; i < len(mhs); i++ {
+		key := mhs[i]
+		low, high := 0, i-1
+
+		for low <= high {
+			mid := (low + high) / 2
+			if mhs[mid].NilaiTes < key.NilaiTes {
+				high = mid - 1
+			} else {
+				low = mid + 1
+			}
+		}
+
+		for j := i - 1; j >= low; j-- {
+			mhs[j+1] = mhs[j]
+		}
+		mhs[low] = key
+	}
 }
 
 func main() {
