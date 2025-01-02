@@ -185,9 +185,9 @@ func viewMhs(mhs []Mahasiswa, jurusanFilter string) {
 	t := table.New(os.Stdout)
 	t.SetHeaders("ID", "Nama", "Jurusan", "Nilai Tes", "Status")
 
-	for _, m := range mhs {
-		if jurusanFilter == "" || m.Jurusan == jurusanFilter {
-			t.AddRow(m.ID, m.Nama, m.Jurusan, fmt.Sprintf("%.2f", m.NilaiTes), m.Status)
+	for _, mahasiswa := range mhs {
+		if jurusanFilter == "" || mahasiswa.Jurusan == jurusanFilter {
+			t.AddRow(mahasiswa.ID, mahasiswa.Nama, mahasiswa.Jurusan, fmt.Sprintf("%.2f", mahasiswa.NilaiTes), mahasiswa.Status)
 		}
 	}
 
@@ -392,8 +392,8 @@ func hapusJurusan(jurusan []Jurusan, nama string) []Jurusan {
 func viewJurusan(jurusan []Jurusan) {
 	t := table.New(os.Stdout)
 	t.SetHeaders("No", "Nama Jurusan")
-	for i, j := range jurusan {
-		t.AddRow(strconv.Itoa(i+1), string(j))
+	for index, nama := range jurusan {
+		t.AddRow(strconv.Itoa(index+1), string(nama))
 	}
 
 	t.Render()
@@ -463,7 +463,7 @@ func main() {
 	user := generateAkunMhs(mhs)
 	user = append(user, User{"admin", "admin123", "admin"})
 
-	options := []string{
+	pilihan := []string{
 		"Jurusan : Tampilkan",
 		"Jurusan : Tambah",
 		"Jurusan : Edit",
@@ -480,7 +480,7 @@ func main() {
 		"Extra : ganti data dengan dummy",
 	}
 
-	selected := 0
+	ygDipilih := 0
 	var loginInfo [2]string
 	signedIn := false
 	role := ""
@@ -490,11 +490,11 @@ func main() {
 	for !signedIn {
 		loginAja := []string{"Username : " + loginInfo[0], "Password : " + loginInfo[1], "\nLogin"}
 		loginField := []string{"Username\t", "Password\t", "\nLogin"}
-		if MenuControl(loginAja, &selected) {
-			if selected == 2 {
+		if MenuControl(loginAja, &ygDipilih) {
+			if ygDipilih == 2 {
 				signedIn, role = autentikasi(user, loginInfo[0], loginInfo[1])
 				if role == "mhs" {
-					options = []string{
+					pilihan = []string{
 						"Jurusan : Tampilkan",
 						"Mahasiswa : Tampilkan",
 					}
@@ -502,7 +502,7 @@ func main() {
 			} else {
 				clearScreen()
 				termbox.Close()
-				loginInfo[selected] = readInput(highlightText(loginField[selected]))
+				loginInfo[ygDipilih] = readInput(highlightText(loginField[ygDipilih]))
 				enableTermbox()
 			}
 		} else {
@@ -512,13 +512,13 @@ func main() {
 		}
 	}
 
-	selected = 0
+	ygDipilih = 0
 
 	for {
-		if MenuControl(options, &selected) {
+		if MenuControl(pilihan, &ygDipilih) {
 			clearScreen()
 			termbox.Close()
-			switch options[selected] {
+			switch pilihan[ygDipilih] {
 			case "Jurusan : Tampilkan":
 				viewJurusan(jurus)
 			case "Jurusan : Tambah":
@@ -527,114 +527,114 @@ func main() {
 				fmt.Println("Jurusan berhasil ditambahkan!")
 			case "Jurusan : Edit":
 				enableTermbox()
-				selected := 0
-				if MenuControl(jurus, &selected) {
+				ygDipilih := 0
+				if MenuControl(jurus, &ygDipilih) {
 					clearScreen()
 					termbox.Close()
 					newName := readInput("Masukkan Nama Baru: ")
-					jurus, mhs = editJurusan(jurus, mhs, string(jurus[selected]), newName)
+					jurus, mhs = editJurusan(jurus, mhs, string(jurus[ygDipilih]), newName)
 				} else {
 					termbox.Close()
 				}
 			case "Jurusan : Hapus":
 				enableTermbox()
-				i := 0
-				if MenuControl(jurus, &i) {
+				ygDipilih := 0
+				if MenuControl(jurus, &ygDipilih) {
 					clearScreen()
 					termbox.Close()
-					jurus = hapusJurusan(jurus, string(jurus[i]))
+					jurus = hapusJurusan(jurus, string(jurus[ygDipilih]))
 				} else {
 					termbox.Close()
 				}
 			case "Mahasiswa : Tampilkan":
 				viewMhs(mhs, "")
 			case "Mahasiswa : Tambah":
-				normalField := [4]string{"ID\t", "Nama\t", "Jurusan\t", "Nilai\t"}
-				var option [4]string
-				selected := 0
-				finished := false
-				for !finished {
-					fields := []string{"ID\t" + option[0], "Nama\t" + option[1], "Jurusan\t" + option[2], "Nilai\t" + option[3], "\nTambah"}
+				masukanAja := [4]string{"ID\t", "Nama\t", "Jurusan\t", "Nilai\t"}
+				var input [4]string
+				ygDipilih := 0
+				selesai := false
+				for !selesai {
+					Masukan := []string{"ID\t" + input[0], "Nama\t" + input[1], "Jurusan\t" + input[2], "Nilai\t" + input[3], "\nTambah"}
 					enableTermbox()
-					if MenuControl(fields, &selected) {
-						if selected == 4 {
-							finished = true
-							option3, _ := strconv.ParseFloat(option[3], 64)
-							mhs = tambahMahasiswa(mhs, option[0], option[1], option[2], option3)
+					if MenuControl(Masukan, &ygDipilih) {
+						if ygDipilih == 4 {
+							selesai = true
+							option3, _ := strconv.ParseFloat(input[3], 64)
+							mhs = tambahMahasiswa(mhs, input[0], input[1], input[2], option3)
 							clearScreen()
 							termbox.Close()
 							break
 						}
 						clearScreen()
 						termbox.Close()
-						option[selected] = readInput(highlightText(normalField[selected]))
+						input[ygDipilih] = readInput(highlightText(masukanAja[ygDipilih]))
 					} else {
 						termbox.Close()
-						finished = true
+						selesai = true
 					}
 					fmt.Println("Mahasiswa berhasil ditambah!")
 				}
 			case "Mahasiswa : Edit":
 				ID := readInput("Masukkan ID Mahasiswa yang akan diedit: ")
-				normalField := [4]string{"ID\t", "Nama\t", "Jurusan\t", "Nilai\t"}
-				var option [4]string
+				masukanAja := [4]string{"ID\t", "Nama\t", "Jurusan\t", "Nilai\t"}
+				var input [4]string
 				for _, m := range mhs {
 					if m.ID == ID {
-						option[0] = m.ID
-						option[1] = m.Nama
-						option[2] = m.Jurusan
-						option[3] = strconv.FormatFloat(m.NilaiTes, 'g', -1, 64)
+						input[0] = m.ID
+						input[1] = m.Nama
+						input[2] = m.Jurusan
+						input[3] = strconv.FormatFloat(m.NilaiTes, 'g', -1, 64)
 					}
 				}
-				if option[0] == "" {
+				if input[0] == "" {
 					fmt.Println("\nTidak ada calon Mahasiswa dengan ID tersebut!")
 					break
 				}
-				selected := 0
-				finished := false
-				for !finished {
-					fields := []string{"ID\t" + option[0], "Nama\t" + option[1], "Jurusan\t" + option[2], "Nilai\t" + option[3], "\nEdit"}
+				ygDipilih := 0
+				selesai := false
+				for !selesai {
+					fields := []string{"ID\t" + input[0], "Nama\t" + input[1], "Jurusan\t" + input[2], "Nilai\t" + input[3], "\nEdit"}
 					enableTermbox()
-					if MenuControl(fields, &selected) {
-						if selected == 4 {
-							finished = true
-							option3, _ := strconv.ParseFloat(option[3], 64)
-							mhs = editMahasiswa(mhs, option[0], option[1], option[2], option3)
+					if MenuControl(fields, &ygDipilih) {
+						if ygDipilih == 4 {
+							selesai = true
+							option3, _ := strconv.ParseFloat(input[3], 64)
+							mhs = editMahasiswa(mhs, input[0], input[1], input[2], option3)
 							clearScreen()
 							termbox.Close()
 							break
 						}
 						clearScreen()
 						termbox.Close()
-						option[selected] = readInput(highlightText(normalField[selected]))
+						input[ygDipilih] = readInput(highlightText(masukanAja[ygDipilih]))
 					} else {
 						termbox.Close()
-						finished = true
+						selesai = true
 					}
 					fmt.Println("Mahasiswa berhasil diedit!")
 				}
 			case "Mahasiswa : Hapus":
 				ID := readInput("Masukkan ID Mahasiswa yang akan dihapus: ")
-				var option [4]string
+				var masukan [4]string
 				for _, m := range mhs {
 					if m.ID == ID {
-						option[0] = m.ID
-						option[1] = m.Nama
-						option[2] = m.Jurusan
-						option[3] = strconv.FormatFloat(m.NilaiTes, 'g', -1, 64)
+						masukan[0] = m.ID
+						masukan[1] = m.Nama
+						masukan[2] = m.Jurusan
+						masukan[3] = strconv.FormatFloat(m.NilaiTes, 'g', -1, 64)
 					}
 				}
-				if option[0] == "" {
+				if masukan[0] == "" {
 					fmt.Println("\nTidak ada calon Mahasiswa dengan ID tersebut!")
 					break
 				}
-				selected := 0
-				finished := false
-				for !finished {
+				ygDipilih := 0
+				selesai := false
+				for !selesai {
 					enableTermbox()
-					if MenuControl([]string{"ID\t" + option[0], "Nama\t" + option[1], "Jurusan\t" + option[2], "Nilai\t" + option[3], "\nHapus"}, &selected) {
-						if selected == 4 {
-							finished = true
+					if MenuControl([]string{"ID\t" + masukan[0], "Nama\t" + masukan[1], "Jurusan\t" + masukan[2], "Nilai\t" + masukan[3], "\nHapus"}, &ygDipilih) {
+						if ygDipilih == 4 {
+							selesai = true
 							mhs = hapusMahasiswa(mhs, ID)
 							clearScreen()
 							termbox.Close()
@@ -644,17 +644,17 @@ func main() {
 						termbox.Close()
 					} else {
 						termbox.Close()
-						finished = true
+						selesai = true
 					}
 				}
 				fmt.Println("Mahasiswa berhasil dihapus!")
 			case "Mahasiswa : Tampilkan per Jurusan":
 				enableTermbox()
-				selected := 0
-				if MenuControl(jurus, &selected) {
+				ygDipilih := 0
+				if MenuControl(jurus, &ygDipilih) {
 					termbox.Close()
 					clearScreen()
-					viewMhs(mhs, string(jurus[selected]))
+					viewMhs(mhs, string(jurus[ygDipilih]))
 				} else {
 					termbox.Close()
 				}
