@@ -175,7 +175,9 @@ func tambahJurusan(jurusan []Jurusan, nama string) []Jurusan {
 func tambahMahasiswa(mhs []Mahasiswa, id string, nama, jurusan string, nilaiTes float64) []Mahasiswa {
 	status := "ditolak"
 	if nilaiTes >= 75 {
-		status = "diterima"
+		status = "✅"
+	} else {
+		status = "❌"
 	}
 	mhs = append(mhs, Mahasiswa{ID: id, Nama: nama, Jurusan: jurusan, NilaiTes: nilaiTes, Status: status})
 	return mhs
