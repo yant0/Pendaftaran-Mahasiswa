@@ -425,16 +425,29 @@ func hapusMahasiswa(mhs []Mahasiswa, id string) []Mahasiswa {
 
 func sortNilai(mhs []Mahasiswa, ascending bool) {
 	if ascending {
-		// Sequential search
+		// Selection sort
 		for i := 0; i < len(mhs)-1; i++ {
+			minIdx := i
 			for j := i + 1; j < len(mhs); j++ {
-				if mhs[i].NilaiTes > mhs[j].NilaiTes {
-					mhs[i], mhs[j] = mhs[j], mhs[i]
+				if mhs[j].NilaiTes < mhs[minIdx].NilaiTes {
+					minIdx = j
 				}
+			}
+			if minIdx != i {
+				mhs[i], mhs[minIdx] = mhs[minIdx], mhs[i]
 			}
 		}
 	} else {
-		binarySort(mhs)
+		// Insertion sort
+		for i := 1; i < len(mhs); i++ {
+			key := mhs[i]
+			j := i - 1
+			for j >= 0 && mhs[j].NilaiTes < key.NilaiTes {
+				mhs[j+1] = mhs[j]
+				j--
+			}
+			mhs[j+1] = key
+		}
 	}
 }
 
