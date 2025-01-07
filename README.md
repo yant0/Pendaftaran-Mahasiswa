@@ -1,7 +1,3 @@
-### README.md
-
----
-
 # Sistem Manajemen Mahasiswa dan Jurusan
 
 Aplikasi ini adalah program berbasis command-line untuk mengelola data mahasiswa dan jurusan. Mendukung operasi CRUD untuk mahasiswa dan jurusan, serta fitur tambahan seperti pengurutan, penyaringan, impor/ekspor data, dan autentikasi pengguna.
@@ -88,9 +84,9 @@ Aplikasi ini adalah program berbasis command-line untuk mengelola data mahasiswa
 3. Instal dependensi:
     - Program menggunakan `termbox-go` dan `github.com/aquasecurity/table`. Instal dengan perintah:
       `bash
-    go get github.com/nsf/termbox-go
-    go get github.com/aquasecurity/table
-    `
+go get github.com/nsf/termbox-go
+go get github.com/aquasecurity/table
+`
       Jika `go.mod` dan `go.sum` ada di dalam direktori, dependensi automatis terdownload dan bisa langsung dijalankan.
 
 ---
