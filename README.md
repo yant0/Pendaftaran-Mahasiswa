@@ -1,4 +1,10 @@
-# Sistem Manajemen Mahasiswa dan Jurusan
+# Aplikasi Pendaftaran Mahasiswa
+
+> Kelompok Dimas :
+> Dimas Bagus Firmansyah (2311102002)
+> Muhammad Agha Zulfadhli (2311102015)
+> Ahmadan Syaridin (2311102038)
+> Muhammad Rifki Fadhilah (2311102032)
 
 Aplikasi ini adalah program berbasis command-line untuk mengelola data mahasiswa dan jurusan. Mendukung operasi CRUD untuk mahasiswa dan jurusan, serta fitur tambahan seperti pengurutan, penyaringan, impor/ekspor data, dan autentikasi pengguna.
 
@@ -81,12 +87,11 @@ Aplikasi ini adalah program berbasis command-line untuk mengelola data mahasiswa
     ```bash
     cd nama_direktori_proyek
     ```
-3. Instal dependensi:
-    - Program menggunakan `termbox-go` dan `github.com/aquasecurity/table`. Instal dengan perintah:
-      `bash
+3. Instal dependensi: - Program menggunakan `termbox-go` dan `github.com/aquasecurity/table`. Instal dengan perintah:
+   `bash
 go get github.com/nsf/termbox-go
 go get github.com/aquasecurity/table
 `
-      Jika `go.mod` dan `go.sum` ada di dalam direktori, dependensi automatis terdownload dan bisa langsung dijalankan.
+   Jika `go.mod` dan `go.sum` ada di dalam direktori, dependensi automatis terdownload dan bisa langsung dijalankan.
 
 ---
