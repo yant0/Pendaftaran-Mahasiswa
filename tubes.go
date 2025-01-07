@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"sort"
 	"strconv"
 
 	"github.com/aquasecurity/table"
@@ -402,12 +403,18 @@ func viewJurusan(jurusan []Jurusan) {
 }
 
 func hapusMahasiswa(mhs []Mahasiswa, id string) []Mahasiswa {
-	for i := 0; i < len(mhs); i++ {
-		if mhs[i].ID == id {
-			mhs = append(mhs[:i], mhs[i+1:]...)
-			break
-		}
+	sort.Slice(mhs, func(i, j int) bool {
+		return mhs[i].ID < mhs[j].ID
+	})
+	index := binarySearchMahasiswa(mhs, id)
+
+	if index == -1 {
+		fmt.Println("Mahasiswa with the given ID not found.")
+		return mhs
 	}
+
+	// Remove the Mahasiswa from the slice
+	mhs = append(mhs[:index], mhs[index+1:]...)
 	return mhs
 }
 
@@ -470,6 +477,23 @@ func binarySort(mhs []Mahasiswa) {
 		}
 		mhs[low] = key
 	}
+}
+
+func binarySearchMahasiswa(mhs []Mahasiswa, id string) int {
+	low, high := 0, len(mhs)-1
+
+	for low <= high {
+		mid := (low + high) / 2
+		if mhs[mid].ID == id {
+			return mid
+		} else if mhs[mid].ID < id {
+			low = mid + 1
+		} else {
+			high = mid - 1
+		}
+	}
+
+	return -1 // Return -1 jika tidak ditemukan
 }
 
 func main() {
